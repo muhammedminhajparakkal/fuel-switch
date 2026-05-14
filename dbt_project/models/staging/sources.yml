@@ -1,0 +1,22 @@
+version: 2
+
+sources:
+  - name: raw
+    database: warehouse
+    schema: main
+    tables:
+      - name: raw_car_sales
+
+# Security check for stg(o/p)
+models:
+  - name: stg_kaggle_car_sales
+    columns:
+      - name: fuel_type
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['EV', 'HYBRID', 'DIESEL', 'PETROL', 'CNG', 'LPG', 'OTHER']
+              
+      - name: state
+        tests:
+          - not_null
