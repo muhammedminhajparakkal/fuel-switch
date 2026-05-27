@@ -1,0 +1,55 @@
+version: 2
+
+models:
+  - name: mart_fuel_transition
+    description: "National year-over-year fuel mix transition and growth rates."
+    columns:
+      - name: year
+        description: "The calendar year of vehicle registrations."
+        tests:
+          - not_null
+      - name: fuel_type
+        description: "The type of fuel (Petrol, Diesel, EV, etc.)."
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['EV', 'HYBRID', 'DIESEL', 'PETROL', 'CNG', 'LPG', 'OTHER']
+      - name: fuel_share_percentage
+        tests:
+          - dbt_utils.accepted_range:
+              min_value: 0
+              max_value: 100
+      - name: yoy_growth_percentage
+        description: "Year-over-year growth. (First year will be NULL)."
+        
+  - name: mart_ev_leaders
+    description: "State-level EV penetration and leaderboard rankings."
+    columns:
+      - name: state
+        description: "The Indian state."
+        tests:
+          - not_null
+      - name: year
+        tests:
+          - not_null
+      - name: ev_share_pct
+        tests:
+          - dbt_utils.accepted_range:
+              min_value: 0
+              max_value: 100
+
+  - name: mart_brand_share
+    description: "Brand-level EV market share and internal EV focus."
+    columns:
+      - name: brand
+        description: "The Original Equipment Manufacturer (OEM)."
+        tests:
+          - not_null
+      - name: year
+        tests:
+          - not_null
+      - name: ev_market_share_pct
+        tests:
+          - dbt_utils.accepted_range:
+              min_value: 0
+              max_value: 100
