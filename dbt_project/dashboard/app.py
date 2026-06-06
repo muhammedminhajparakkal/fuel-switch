@@ -103,3 +103,41 @@ with tab1:
                 delta_color="normal" if fuel in ["EV", "HYBRID", "CNG"] else "inverse" 
                 )
 
+# TAB 2 — STATE EV PENETRATION 
+# --------------------------------------------------------------------
+with tab2:
+    st.header("Regional EV Penetration Leaderboard")
+    
+    col_filter2, _ = st.columns([3, 7])
+    with col_filter2:
+        try:
+            year_list_df = load_data("SELECT DISTINCT year FROM mart_ev_leaders ORDER BY year DESC")
+            years = ["2000 - 2023"] + [str(y) for y in year_list_df["year"].tolist()]
+        except:
+            years = ["2000 - 2023", "2024", "2023", "2022", "2021"]
+            
+        selected_year = st.selectbox("📅 Filter by Registration Year:", years, key="tab2_year")
+
+    # Build query based on year selection
+    if selected_year == "2000 - 2023":
+        state_query = "SELECT state, AVG(ev_share_pct) as ev_share_pct FROM mart_ev_leaders GROUP BY state ORDER BY ev_share_pct DESC LIMIT 12"
+        st.subheader(f"Top 12 Indian states by EV registration share ({selected_year})")
+        
+    else:
+        year_int=int(selected_year)
+        state_query = f"SELECT * FROM mart_ev_leaders WHERE year = {year_int} ORDER BY ev_share_pct DESC LIMIT 12"
+        st.subheader(f"Top 12 Indian states by EV registration share ({selected_year})")
+    
+    df_state = load_data(state_query)
+
+    fig_state = px.bar(
+        df_state, 
+        x="ev_share_pct", 
+        y="state", 
+        orientation='h',# horizontal
+        labels={"ev_share_pct": "EV Market Penetration Share (%)", "state": "State / UT"},
+        color="ev_share_pct",
+        color_continuous_scale=px.colors.sequential.Mint
+    )
+    fig_state.update_layout(yaxis={'categoryorder':'total ascending'}, coloraxis_showscale=False)
+    st.plotly_chart(fig_state, use_container_width=True)
