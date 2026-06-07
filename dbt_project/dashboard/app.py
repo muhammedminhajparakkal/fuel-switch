@@ -122,7 +122,7 @@ with tab2:
     if selected_year == "2000 - 2023":
         state_query = "SELECT state, AVG(ev_share_pct) as ev_share_pct FROM mart_ev_leaders GROUP BY state ORDER BY ev_share_pct DESC LIMIT 12"
         st.subheader(f"Top 12 Indian states by EV registration share ({selected_year})")
-        
+
     else:
         year_int=int(selected_year)
         state_query = f"SELECT * FROM mart_ev_leaders WHERE year = {year_int} ORDER BY ev_share_pct DESC LIMIT 12"
@@ -141,3 +141,22 @@ with tab2:
     )
     fig_state.update_layout(yaxis={'categoryorder':'total ascending'}, coloraxis_showscale=False)
     st.plotly_chart(fig_state, use_container_width=True)
+
+    # TAB 3 — MAKER EV SHARE 
+# --------------------------------------------------------------------
+with tab3:
+    st.header("Automaker Competitive Landscape")
+    st.subheader("EV Market Share by Manufacturer Over Time 2000 - 2023")
+    
+    brand_query = f"SELECT brand, year, ev_market_share_pct FROM mart_brand_share  ORDER BY year, ev_market_share_pct DESC "
+    df_brand = load_data(brand_query)
+    
+    fig_brand = px.line(
+        df_brand, 
+        x="year", 
+        y="ev_market_share_pct", 
+        labels={"year": "Year", "ev_market_share_pct": "EV Market Segment Share (%)"},
+        color="brand"   
+    )
+    st.plotly_chart(fig_brand, use_container_width=True)
+
