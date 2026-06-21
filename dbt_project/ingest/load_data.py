@@ -14,7 +14,7 @@ def load_csv_to_duckdb(csv_filename, table_name):
         return
 
 # Connect to the database
-    print(f"Connecting to Duckdb at {csv_path}......")
+    print(f"Connecting to Duckdb at {db_path}......")
     conn=duckdb.connect(db_path)
 
     print(f"Reading {csv_path} into memory")
